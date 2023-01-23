@@ -4,7 +4,7 @@ const route = require("./route/route")
 const app = express();
 app.use(express.json())
 
-mongoose.connect("",{useNewUrlParser:true})
+mongoose.connect("mongodb+srv://newdatabase:Gd6tycxuRBETdhM7@ourowncluster.jzinjug.mongodb.net/group8Database",{useNewUrlParser:true})
     .then(()=> console.log("monogoDb is connected"))
     .catch(err => console.log(err))
 
