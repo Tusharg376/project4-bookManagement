@@ -1,5 +1,7 @@
 const userModel =  require('../models/userModel')
 const jwt = require('jsonwebtoken')
+const validator = require("validator")
+
 
 const createAuthor = async function(req,res){
     try {
@@ -18,8 +20,8 @@ const createAuthor = async function(req,res){
 	    let titleEnum = userModel.schema.obj.title.enum
 	    if(!titleEnum.includes(title)) return res.status(400).send({status:false,message:"title must contain Mr,Miss or Mrs"})
 	
-        let mailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
-        if(!email.match(mailRegex)) return res.status(400).send({status:false,message:"invalid Email format"})
+       // let mailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
+        if(!validator.isEmail(email)) return res.status(400).send({status:false,message:"invalid Email format"})
 
 	    let checkMail = await userModel.find({email:email})
 	    if(checkMail.length != 0) return res.status(400).send({status:false,message:"email is not unique"})
@@ -51,12 +53,6 @@ const loginUser = async function (req, res) {
             return res.status(400).send({ status: false, msg: "email is required" });
         };
 
-        const validMail = (mail) =>
-         /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(mail);
-
-        if (!validMail(email)) {
-            return res.status(400).send({ status: false, msg: "please enter a valid email" });
-        };
         if (!password) {
             return res.status(400).send({ status: false, msg: "password is required" });
         };

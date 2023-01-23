@@ -86,8 +86,6 @@ try {
 
     if(findBooks.length!=0){return res.status(200).send({status:true, data:findBooks})}
     }
-    //else{return res.status(404).send({status:false, msg:"no data found"})}
-
     
     qparams.isDeleted = false;
 
