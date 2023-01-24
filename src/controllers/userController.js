@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const validator = require("validator")
 
 
-const createAuthor = async function(req,res){
+module.exports.createAuthor = async function(req,res){
     try {
 	let data = req.body
 	    if(Object.keys(data).length == 0) return res.status(400).send({status:false,message:"request body can't be empty"})
@@ -20,7 +20,6 @@ const createAuthor = async function(req,res){
 	    let titleEnum = userModel.schema.obj.title.enum
 	    if(!titleEnum.includes(title)) return res.status(400).send({status:false,message:"title must contain Mr,Miss or Mrs"})
 	
-       // let mailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
         if(!validator.isEmail(email)) return res.status(400).send({status:false,message:"invalid Email format"})
 
 	    let checkMail = await userModel.find({email:email})
@@ -41,20 +40,20 @@ const createAuthor = async function(req,res){
 }
 
 
-const loginUser = async function (req, res) {
+module.exports.loginUser = async function (req, res) {
     try {
         const data = req.body
         const { email, password } = req.body
 
         if(Object.keys(data)==0){
-            return res.status(400).send({ status: false, msg: "enter the email and password" })
+            return res.status(400).send({ status: false, message: "enter the email and password" })
         };
         if (!email) {
-            return res.status(400).send({ status: false, msg: "email is required" });
+            return res.status(400).send({ status: false, message: "email is required" });
         };
 
         if (!password) {
-            return res.status(400).send({ status: false, msg: "password is required" });
+            return res.status(400).send({ status: false, message: "password is required" });
         };
 
         const findCredentials = await userModel.findOne({ email:email,password:password });
@@ -82,4 +81,3 @@ const loginUser = async function (req, res) {
        return res.status(500).send({status:false , message:err.message})
     };
 }
-module.exports = {createAuthor, loginUser}
