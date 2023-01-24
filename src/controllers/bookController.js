@@ -131,7 +131,7 @@ module.exports.updateBooks = async function(req,res){
 	    if(!Object.keys(data).length) return res.status(400).send({status:false,message:"please provide data for update"})
 	
 	    if(!mongoose.isValidObjectId(bookId)) return res.status(400).send({status:false,message:"invalid bookId"})
-	    
+	    if(data.title == "" || data.ISBN == ""|| data.excerpt == ""  ) return res.status(400).send({status:false,message:"please give a valid value"})
 	    let checkTitle = await bookModel.findOne({title:data.title})
 	    if(checkTitle) return res.status(400).send({status:false,message:"please provide unique title"})
 	    
