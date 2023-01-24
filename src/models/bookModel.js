@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const objectId = mongoose.Schema.Types.ObjectId
-const validator = require("validator")
+
 
 const bookSchema = new mongoose.Schema({
     title:{
@@ -20,10 +20,6 @@ const bookSchema = new mongoose.Schema({
     ISBN:{
         type:String,
         required:true,
-        validate : [
-         validator.isISBN,
-         "invalid ISBN"
-        ],
         unique:true
     },
     category:{

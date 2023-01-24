@@ -67,6 +67,7 @@ const loginUser = async function (req, res) {
         const userName = findCredentials.name
 
         const token =  jwt.sign({
+            
             userId: id,
             name : userName,
             iat: Math.floor(Date.now() / 1000), //time of issuing the token.
