@@ -10,6 +10,8 @@ router.post('/books', middleWare.mid1, bookController.createBook)
 router.get('/books', middleWare.mid1, bookController.getBooks)
 router.get("/books/:bookId", middleWare.mid1, bookController.getBooksByParams)
 router.put("/books/:bookId",middleWare.mid1,bookController.updateBooks)
+router.delete("/books/:bookId",middleWare.mid1,bookController.deleteBook)
+
 router.all('*/',(req ,res)=>{
     res.status(400).send({status: false , message :" path invalid"})
   })
