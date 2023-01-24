@@ -6,14 +6,14 @@ const middleWare = require("../middleWare/auth")
 
 router.post('/register', userController.createAuthor)
 router.post('/login', userController.loginUser)
-router.post('/books', middleWare.mid1,middleWare.mid2, bookController.createBook)
+router.post('/books', middleWare.mid1, bookController.createBook)
 router.get('/books', middleWare.mid1, bookController.getBooks)
-router.get("/books/:bookId", middleWare.mid1,middleWare.mid2, bookController.getBooksByParams)
+router.get("/books/:bookId", middleWare.mid1, bookController.getBooksByParams)
 router.put("/books/:bookId",middleWare.mid1,middleWare.mid2,bookController.updateBooks)
-
+router.delete("/books/:bookId",middleWare.mid1,middleWare.mid2,bookController.deleteBook)
 
 router.all('*/',(req ,res)=>{
-    res.status(400).send({status: false , message :" path invalid"})
+    res.status(400).send({status: false , message :"HTTP path invalid"})
   })
 
 

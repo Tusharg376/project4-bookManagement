@@ -151,3 +151,18 @@ module.exports.updateBooks = async function(req,res){
 }
 }
 
+module.exports.deleteBook = async(req,res)=>{
+  try{
+    let bookId = req.params.bookId
+    if(!mongoose.isValidObjectId(bookId)) return res.status(400).send({status:false, message:"Invalid book id"})
+
+    let deletedBook = await bookModel.findOneAndUpdate({_id:bookId, isDeleted:false}, {isDeleted:true, deletedAt: Date.now()},{new:true})
+
+    if(!deletedBook) return res.status(404).send({status:false,message:"data not found"})
+
+    return res.status(200).send({status:true, message:"Book has been deleted successfully"})
+
+  }catch(error){
+    res.status(500).send({status:false,message:error.message})
+  }
+}
