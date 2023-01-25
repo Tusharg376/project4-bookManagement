@@ -9,7 +9,13 @@ module.exports.createAuthor = async function(req,res){
 	    if(Object.keys(data).length == 0) return res.status(400).send({status:false,message:"request body can't be empty"})
 	   
 	    let {title,name, phone, email, password, address} = data
-	
+        
+        title = title.trim()
+        name = name.trim()
+        phone = phone.trim()
+        password = password.trim()
+        email = email.trim()
+
 	    if(!title)  return res.status(400).send({status:false,message:"Please provide title"})
 	    if(!name)  return res.status(400).send({status:false,message:"Please provide name"})
 	    if(!phone)  return res.status(400).send({status:false,message:"Please provide phone"})
@@ -63,15 +69,10 @@ module.exports.loginUser = async function (req, res) {
         };
 
         const id = findCredentials._id
-        const userName = findCredentials.name
 
         const token =  jwt.sign({
-            
             userId: id,
-            name : userName,
-            iat: Math.floor(Date.now() / 1000), //time of issuing the token.
-            exp: Math.floor(Date.now() / 1000) + 60*30 //setting token expiry time limit.
-        },"project4Group8");
+        },"project4Group8",{expiresIn:"30m"});
 
         res.header('x-api-key', token);
 

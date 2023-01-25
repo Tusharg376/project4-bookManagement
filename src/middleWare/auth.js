@@ -3,16 +3,20 @@ const mongoose = require('mongoose')
 const bookModel = require('../models/bookModel')
 
 module.exports.authentication = async (req, res, next) => {
-    let token  = req.headers["x-api-key"]
-    if(!token){return res.status(400).send({status:false, message:"header is mandatory"})}
-
-    jwt.verify(token, "project4Group8", function(err, decode){
-        if(err) {return res.status(401).send({status:false, message:"invalid token"})}
-
-        req.decodeToken = decode
-
-        next()
-    })
+    try {
+	let token  = req.headers["x-api-key"]
+	    if(!token){return res.status(400).send({status:false, message:"header is mandatory"})}
+	
+	    jwt.verify(token, "project4Group8", function(err, decode){
+	        if(err) {return res.status(401).send({status:false, message:err.message})}
+	
+	        req.decodeToken = decode
+	
+	        next()
+	    })
+} catch (error) {
+    res.status(500).send({status:false,message:error.message})
+}
     
 }
 
@@ -41,6 +45,7 @@ module.exports.bodyMid = async function(req,res,next){
     try {
 	let data = req.body
 	    let {userId} = data
+        if(!mongoose.isValidObjectId(userId)) return res.status(400).send({status:false,message:"Invalid userID"}) 
 	    if(req.decodeToken.userId != userId) return res.status(403).send({status:false,message:"not authorised"})
 	    next()
 } catch (error) {
