@@ -61,24 +61,25 @@ try {
 
     let {userId, category, subcategory} = qparams
 
-    if(!(userId || category || subcategory)) res.status(400).send({status:false,message:"invalid query"})
     
     if(Object.keys(qparams).length==0){
 
     let findBooks = await bookModel.find({isDeleted:false}).select({_id:1,title:1,excerpt:1,userId:1,category:1,releasedAt:1,reviews:1}).sort({tittle:1})
 
-    if(findBooks.length!=0){return res.status(200).send({status:true,message:'success',data:findBooks})}
+    if(findBooks.length!=0){return res.status(200).send({status:true,message:'Books list',data:findBooks})}
 
     if(findBooks.length == 0){return res.status(404).send({status:false,message:"no documents found"})}
     }
-    
-    if(userId || category || subcategory){
 
+    if(!(userId || category || subcategory)) res.status(400).send({status:false,message:"invalid query"})
+
+    if(userId || category || subcategory){
+     
     let data = await bookModel.find({...qparams, isDeleted:false}).select({__v:0,isDeleted:0,createdAt:0,updatedAt:0,ISBN:0,subcategory:0}).sort({title:1})
     
     if(data.length == 0){return res.status(404).send({status:false, message:"no data found with this query"})}
       
-    return res.status(200).send({status:true,message:"books list", data:data})
+    return res.status(200).send({status:true,message:"Books list", data:data})
     }
 } catch (error) {
     res.status(500).send({status:false, message:error.message})
@@ -94,11 +95,11 @@ module.exports.getBooksByParams = async (req, res) => {
     let checkBookId = await bookModel.findOne({_id:params, isDeleted:false}).select({__v:0}).lean()
     if(!checkBookId){return res.status(404).send({status:false, message:"book is not found"})}
 
-    let reviewBook = await reviewModel.find({bookId:checkBookId._id, isDeleted:false})
+    let reviewBook = await reviewModel.find({bookId:checkBookId._id, isDeleted:false}).select({_id:1, bookId:1, reviewedBy:1, reviewedAt :1, review:1 , rating:1})
 
     checkBookId.reviewsData = reviewBook
 
-    return res.status(200).send({status:true, data:checkBookId})
+    return res.status(200).send({status:true, message : "Books list" , data:checkBookId})
 
    } catch (error) {
     res.status(500).send({status:false, message:error.message})
@@ -111,18 +112,17 @@ module.exports.updateBooks = async function(req,res){
 	    let data = req.body
 	    if(!Object.keys(data).length) return res.status(400).send({status:false,message:"please provide data for update"})
 
-        data.title = data.title.trim()
-        data.ISBN = data.ISBN.trim()
-        data.excerpt = data.excerpt.trim()
+        if(data.title){data.title = data.title.trim()}
+        if(data.ISBN){data.ISBN = data.ISBN.trim()}
+        if(data.excerpt){data.excerpt = data.excerpt.trim()}
 	
-	
-	    if(!mongoose.isValidObjectId(bookId)) return res.status(400).send({status:false,message:"invalid bookId"})
 	    if(data.title == "" || data.ISBN == ""|| data.excerpt == ""  ) return res.status(400).send({status:false,message:"please give a valid Input "})
 	    let checkTitle = await bookModel.findOne({title:data.title})
 	    if(checkTitle) return res.status(400).send({status:false,message:"please provide unique title"})
-	    
-        if(!(data.ISBN).match(ISBNregex)) return res.status(400).send({status:false,message:"invalid ISBN format"})
-	
+	    if(data.ISBN){
+            if(!(data.ISBN).match(ISBNregex)) return res.status(400).send({status:false,message:"invalid ISBN format"})
+        }
+	  
         let checkISBN = await bookModel.findOne({ISBN:data.ISBN})
 	    if(checkISBN) return res.status(400).send({status:false,message:"please provide unique ISBN"})
 	    
