@@ -30,7 +30,7 @@ try {
 	    
 	        const book = await bookModel.findOne({_id:bookId,isDeleted:false});
 	    
-	        if(!book) return res.status(404).send({status:false,message:"Book not found."});
+	        if(!book) return res.status(404).send({status:false,message:`No book found by ${bookId}`});
 	    
 	        if(req.decodeToken.userId!=book.userId) return res.status(403).send({status:false,message:"Not authorised"});
 	    

@@ -10,7 +10,7 @@ let categoryregex = /^[a-zA-Z,\s]*$/
 module.exports.createBook = async (req, res) => {
     try {
         let data = req.body;
-        let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data;
+        let { title, excerpt, userId, ISBN, category, subcategory } = data;
         if (Object.keys(req.body).length == 0)return res.status(400).send({ status: false, message: "Body should not be empty" });
 
         title = title.trim()
