@@ -14,19 +14,19 @@ module.exports.createAuthor = async function (req, res) {
 
         let { title, name, phone, email, password, address } = data
 
-        if (!title) return res.status(400).send({ status: false, message: "Please provide title" })
-        if (!name) return res.status(400).send({ status: false, message: "Please provide name" })
-        if (!phone) return res.status(400).send({ status: false, message: "Please provide phone" })
-        if (!email) return res.status(400).send({ status: false, message: "Please provide email" })
-        if (!password) return res.status(400).send({ status: false, message: "Please provide password" })
-        if (!address) return res.status(400).send({ status: false, message: "Please provide address" })
-
         title = title.trim()
         name = name.trim()
         phone = phone.trim()
         password = password.trim()
         email = email.trim()
 
+        if (!title) return res.status(400).send({ status: false, message: "Please provide title" })
+        if (!name) return res.status(400).send({ status: false, message: "Please provide name" })
+        if (!phone) return res.status(400).send({ status: false, message: "Please provide phone" })
+        if (!email) return res.status(400).send({ status: false, message: "Please provide email" })
+        if (!password) return res.status(400).send({ status: false, message: "Please provide password" })
+        if (!address) return res.status(400).send({ status: false, message: "Please provide address" })
+       
         let titleEnum = userModel.schema.obj.title.enum
         if (!titleEnum.includes(title)) return res.status(400).send({ status: false, message: "title must contain Mr,Miss or Mrs" })
 
@@ -59,13 +59,13 @@ module.exports.loginUser = async function (req, res) {
         const { email, password } = req.body
 
         if (Object.keys(data) == 0) return res.status(400).send({ status: false, message: "enter the email and password" })
+        
+        password = password.trim()
+        email = email.trim()
 
         if (!email) return res.status(400).send({ status: false, message: "email is required" });
 
         if (!password) return res.status(400).send({ status: false, message: "password is required" });
-
-        password = password.trim()
-        email = email.trim()
 
         const findCredentials = await userModel.findOne({ email: email, password: password });
 
