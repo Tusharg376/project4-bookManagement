@@ -24,11 +24,11 @@ module.exports.paramMid = async (req,res,next) => {
 
 try {
 	        
-	        const bookId = req.params.bookId;
+	        let bookId = req.params.bookId;
 	    
 	        if(!mongoose.isValidObjectId(bookId)) return res.status(400).send({status:false,message:"Invalid bookId."});
 	    
-	        const book = await bookModel.findOne({_id:bookId,isDeleted:false});
+	        let book = await bookModel.findOne({_id:bookId,isDeleted:false});
 	    
 	        if(!book) return res.status(404).send({status:false,message:`No book found by ${bookId}`});
 	    

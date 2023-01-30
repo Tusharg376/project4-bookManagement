@@ -55,8 +55,8 @@ module.exports.createAuthor = async function (req, res) {
 
 module.exports.loginUser = async function (req, res) {
     try {
-        const data = req.body
-        const { email, password } = req.body
+        let data = req.body
+        let { email, password } = req.body
 
         if (Object.keys(data) == 0) return res.status(400).send({ status: false, message: "enter the email and password" })
         

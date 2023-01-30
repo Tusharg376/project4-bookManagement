@@ -85,13 +85,13 @@ module.exports.updateReview = async function (req, res) {
 
 module.exports.deleteReview = async function (req, res) {
 	try {
-		const reviewId = req.params.reviewId
-		const bookId = req.params.bookId;
+		let reviewId = req.params.reviewId
+		let bookId = req.params.bookId;
 
 		if(!mongoose.isValidObjectId(bookId)) return res.status(400).send({status:false,message:"Invalid bookId."});
 		if (!mongoose.isValidObjectId(reviewId)) return res.status(400).send({ status: false, message: "Invalid reviewId." })
 
-		const review = await reviewModel.findOne({ _id: reviewId, isDeleted: false })
+		let review = await reviewModel.findOne({ _id: reviewId, isDeleted: false })
 
 		if (!review) return res.status(404).send({ status: false, message: `No review found by Id ${reviewId}` })
 

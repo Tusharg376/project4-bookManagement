@@ -46,7 +46,7 @@ module.exports.createBook = async (req, res) => {
 
         data.releasedAt = moment().format("YYYY-MM-DD")
 
-        const saveData = await bookModel.create({ title, excerpt, userId, ISBN, category, subcategory });
+        let saveData = await bookModel.create({ title, excerpt, userId, ISBN, category, subcategory });
 
         return res.status(201).send({ status: true, message: 'success', data: saveData });
     } catch (err) {
