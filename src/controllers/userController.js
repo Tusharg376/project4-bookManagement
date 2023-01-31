@@ -14,7 +14,7 @@ module.exports.createAuthor = async function (req, res) {
 
         let { title, name, phone, email, password, address } = data
 
-        title = title.trim()
+      //  title = title.trim()
         name = name.trim()
         phone = phone.trim()
         password = password.trim()
@@ -85,3 +85,26 @@ module.exports.loginUser = async function (req, res) {
         return res.status(500).send({ status: false, message: err.message })
     };
 }
+
+/*exports.loginUser = async (req, res) => {
+    try {
+	let data =  req.body
+	
+	    let {email , password } = data
+	    if(Object.keys(data).length==0){return res.status(400).send({status:false, message:"body can't be empty"})}
+	
+	    let credentialsCheck = await userModel.findOne({email:email, password:password})
+	
+	    if(!credentialsCheck){return res.status(404).send({status:false,message:"userCredentials are wrong , please use valid email and password"})}
+	
+	    let user = credentialsCheck._id
+	
+	    let token = jwt.sign({user : user, }, "secretkey",{expiresIn : "1m"})
+	
+	    res.status(201).send({status:true, message:"token created successfully" , data:token})
+} catch (error) {
+	res.status(500).send({status:false, message:error.message})
+}
+
+}
+*/

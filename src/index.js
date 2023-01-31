@@ -2,8 +2,12 @@ const express = require("express")
 const mongoose = require("mongoose")
 const route = require("./route/route")
 const app = express();
+const multer = require("multer");
+const appConfig = require("aws-sdk")
 app.use(express.json())
 mongoose.set('strictQuery', false)
+
+app.use(multer().any())
 
 app.use((err, req, res, next) => {
   if (err.message === "Unexpected end of JSON input") {

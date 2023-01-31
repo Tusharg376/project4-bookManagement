@@ -67,6 +67,9 @@ module.exports.updateReview = async function (req, res) {
 
 		if (review == "" || rating == "" || reviewedBy == "") return res.status(400).send({ status: false, message: "please give some value" })
 
+		if (rating < 1 || rating > 5)
+			return res.status(400).send({ status: false, message: 'Rating should be an Integer & between 1 to 5' })
+
 		let checkBookId = await bookModel.findOne({ _id: bookId, isDeleted: false }).select({ __v: 0 }).lean()
 		if (!checkBookId) return res.status(404).send({ status: false, message: "book not found" })
 

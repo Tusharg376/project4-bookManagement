@@ -4,6 +4,41 @@ const userModel = require('../models/userModel')
 const reviewModel = require("../models/reviewModel")
 const moment = require('moment')
 
+const aws = require("aws-sdk")
+
+
+// configuration  aws
+aws.config.update({
+    accessKeyId: "AKIAY3L35MCRZNIRGT6N",
+    secretAccessKey: "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",
+    region: "ap-south-1"
+})
+
+
+let uploadFile= async ( file) =>{
+    return new Promise( function(resolve, reject) {
+     let s3= new aws.S3({apiVersion: '2006-03-01'}); 
+ 
+     var uploadParams= {
+         ACL: "public-read",
+         Bucket: "classroom-training-bucket",  
+         Key: "abc/" + file.originalname, 
+         Body: file.buffer
+     }
+ 
+ 
+     s3.upload( uploadParams, function (err, data ){
+         if(err) {
+             return reject({"error": err})
+         }
+         console.log(data)
+         console.log("file uploaded succesfully")
+         return resolve(data.Location)
+     })
+ 
+    })
+ }
+
 // regex
 let ISBNregex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
 let categoryregex = /^[a-zA-Z,\s]*$/
@@ -11,9 +46,17 @@ let categoryregex = /^[a-zA-Z,\s]*$/
 
 module.exports.createBook = async (req, res) => {
     try {
+        let files = req.files
         let data = req.body;
-        let { title, excerpt, userId, ISBN, category, subcategory } = data;
+        let { title, excerpt, userId, ISBN, category, subcategory  } = data;
         if (Object.keys(req.body).length == 0) return res.status(400).send({ status: false, message: "Body should not be empty" });
+        // files check
+       
+        if(files && files.length>0){
+            let uploadFileUrl = await uploadFile(files[0])
+            data.bookCover = uploadFileUrl
+        }else{res.status(400).send({msg:"no file found"})}
+      
 
         title = title.trim()
         excerpt = excerpt.trim()
@@ -28,7 +71,7 @@ module.exports.createBook = async (req, res) => {
         if (!ISBN) return res.status(400).send({ status: false, message: "ISBN is required" });
         if (!category) return res.status(400).send({ status: false, message: "category is required" });
         if (!subcategory) return res.status(400).send({ status: false, message: "subcategory is required" });
-
+        
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send({ status: false, message: "Invalid user id." })
 
         if (!ISBN.match(ISBNregex)) return res.status(400).send({ status: false, message: "ISBN must contain 10 to 13 digits." });
@@ -44,14 +87,14 @@ module.exports.createBook = async (req, res) => {
         let checkIsbn = await bookModel.findOne({ ISBN: ISBN });
         if (checkIsbn) return res.status(400).send({ status: false, message: "This ISBN already exists" });
 
-        data.releasedAt = moment().format("YYYY-MM-DD")
-
-        let saveData = await bookModel.create({ title, excerpt, userId, ISBN, category, subcategory });
+        if(!data.releasedAt) data.releasedAt = moment().format("YYYY-MM-DD")
+        let {releasedAt, bookCover} = data
+        let saveData = await bookModel.create({ title, excerpt, userId, ISBN, category, subcategory ,releasedAt,bookCover});
 
         return res.status(201).send({ status: true, message: 'success', data: saveData });
     } catch (err) {
         console.log(err.message);
-        res.status(500).send({ status: false, msg: "SOMETHING IS WRONG IN SERVER" });
+        res.status(500).send({ status: false, msg: err.message });
     }
 };
 
