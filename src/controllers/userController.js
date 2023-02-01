@@ -14,19 +14,17 @@ module.exports.createAuthor = async function (req, res) {
 
         let { title, name, phone, email, password, address } = data
 
-      //  title = title.trim()
-        name = name.trim()
-        phone = phone.trim()
-        password = password.trim()
-        email = email.trim()
-
         if (!title) return res.status(400).send({ status: false, message: "Please provide title" })
+        else title = title.trim()
         if (!name) return res.status(400).send({ status: false, message: "Please provide name" })
+        else name = name.trim()
         if (!phone) return res.status(400).send({ status: false, message: "Please provide phone" })
+        else phone = phone.trim()
         if (!email) return res.status(400).send({ status: false, message: "Please provide email" })
+        else password = password.trim()
         if (!password) return res.status(400).send({ status: false, message: "Please provide password" })
-        if (!address) return res.status(400).send({ status: false, message: "Please provide address" })
-       
+        else email = email.trim()
+        
         let titleEnum = userModel.schema.obj.title.enum
         if (!titleEnum.includes(title)) return res.status(400).send({ status: false, message: "title must contain Mr,Miss or Mrs" })
 
@@ -40,7 +38,6 @@ module.exports.createAuthor = async function (req, res) {
 
         let checkPhone = await userModel.find({ phone: phone })
         if (checkPhone.length != 0) return res.status(400).send({ status: false, message: "phone number already exist" })
-
 
         if (!password.match(passRegex)) return res.status(400).send({ status: false, message: "invalid password format" })
 
@@ -86,25 +83,3 @@ module.exports.loginUser = async function (req, res) {
     };
 }
 
-/*exports.loginUser = async (req, res) => {
-    try {
-	let data =  req.body
-	
-	    let {email , password } = data
-	    if(Object.keys(data).length==0){return res.status(400).send({status:false, message:"body can't be empty"})}
-	
-	    let credentialsCheck = await userModel.findOne({email:email, password:password})
-	
-	    if(!credentialsCheck){return res.status(404).send({status:false,message:"userCredentials are wrong , please use valid email and password"})}
-	
-	    let user = credentialsCheck._id
-	
-	    let token = jwt.sign({user : user, }, "secretkey",{expiresIn : "1m"})
-	
-	    res.status(201).send({status:true, message:"token created successfully" , data:token})
-} catch (error) {
-	res.status(500).send({status:false, message:error.message})
-}
-
-}
-*/

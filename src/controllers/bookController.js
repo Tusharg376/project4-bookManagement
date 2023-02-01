@@ -55,23 +55,21 @@ module.exports.createBook = async (req, res) => {
         if(files && files.length>0){
             let uploadFileUrl = await uploadFile(files[0])
             data.bookCover = uploadFileUrl
-        }else{res.status(400).send({msg:"no file found"})}
+        }else{ return res.status(400).send({msg:"no file found"})}
       
-
-        title = title.trim()
-        excerpt = excerpt.trim()
-        userId = userId.trim()
-        ISBN = ISBN.trim()
-        category = category.trim()
-        subcategory = subcategory.trim()
-
         if (!title) return res.status(400).send({ status: false, message: "title is required" });
+        else title = title.trim()
         if (!excerpt) return res.status(400).send({ status: false, message: "excerpt is required" });
+        else excerpt = excerpt.trim()
         if (!userId) return res.status(400).send({ status: false, message: "userId is required" });
+        else userId = userId.trim()
         if (!ISBN) return res.status(400).send({ status: false, message: "ISBN is required" });
+        else ISBN = ISBN.trim()
         if (!category) return res.status(400).send({ status: false, message: "category is required" });
+        else category = category.trim()
         if (!subcategory) return res.status(400).send({ status: false, message: "subcategory is required" });
-        
+        else subcategory = subcategory.trim()
+
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send({ status: false, message: "Invalid user id." })
 
         if (!ISBN.match(ISBNregex)) return res.status(400).send({ status: false, message: "ISBN must contain 10 to 13 digits." });
@@ -91,7 +89,7 @@ module.exports.createBook = async (req, res) => {
         let {releasedAt, bookCover} = data
         let saveData = await bookModel.create({ title, excerpt, userId, ISBN, category, subcategory ,releasedAt,bookCover});
 
-        return res.status(201).send({ status: true, message: 'success', data: saveData });
+        return res.status(201).send({ status: true, message: 'success', data:saveData});
     } catch (err) {
         console.log(err.message);
         res.status(500).send({ status: false, msg: err.message });
